@@ -36,24 +36,22 @@ app.get('/restaurants/:restaurant_id', (req, res) => {
     .lean()
     .then((restaurant) => res.render('show', { restaurant }))
     .catch(error => console.log(error))
-
-
-  // const restaurant = restaurantList.results.filter(item => item.id == req.params.restaurant_id)
-  // res.render('show', { restaurant: restaurant[0] })
 })
 
 
-// app.get('/search', (req, res) => {
-//   const keyword = req.query.keyword
-//   const restaurants = restaurantList.results.filter(restaurants => {
-//     return restaurants.name.toLocaleLowerCase().includes(keyword.toLowerCase()) && restaurants.category.toLocaleLowerCase().includes(keyword.toLowerCase())
-//   })
-//   res.render('index', { restaurant: restaurants, keyword })
-// })
-// app.get('/restaurants/:restaurant_id', (req, res) => {
-//   const restaurant = restaurantList.results.filter(item => item.id == req.params.restaurant_id)
-//   res.render('show', { restaurant: restaurant[0] })
-// })
+app.get('/search', (req, res) => {
+  const keyword = req.query.keyword
+  Restaurant.find()
+    .lean()
+    .then((restaurants) => {
+      let restaurantSearch = restaurants.filter((restaurant) => {
+        return restaurant.name.toLocaleLowerCase().includes(keyword.toLowerCase()) || restaurant.category.toLocaleLowerCase().includes(keyword.toLowerCase())
+      })
+      res.render('index', { restaurant: restaurantSearch, keyword })
+    })
+})
+
+// return restaurant.name.toLocaleLowerCase().includes(keyword.toLowerCase()) && restaurant.category.toLocaleLowerCase().includes(keyword.toLowerCase())
 
 app.listen(port, () => {
   console.log(`Express is running on http://localhost:${port}`)
