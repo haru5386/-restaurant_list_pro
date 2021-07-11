@@ -4,9 +4,8 @@ const port = 3000
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 
-TODO:
-//要拿掉的資料
-// const restaurantList = require('./restaurant.json')
+//載入資料
+const Restaurant = require('./models/restaurant')
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
@@ -25,9 +24,24 @@ db.once('open', () => {
 })
 app.use(express.static('public'))
 app.get('/', (req, res) => {
-  res.send('hi')
-  // res.render('index', { restaurant: restaurantList.results })
+  Restaurant.find()
+    .lean()
+    .then(restaurant => res.render('index', { restaurant }))
+    .catch(error => console.error(error))
 })
+
+app.get('/restaurants/:restaurant_id', (req, res) => {
+  const id = req.params.restaurant_id
+  return Restaurant.findById(id)
+    .lean()
+    .then((restaurant) => res.render('show', { restaurant }))
+    .catch(error => console.log(error))
+
+
+  // const restaurant = restaurantList.results.filter(item => item.id == req.params.restaurant_id)
+  // res.render('show', { restaurant: restaurant[0] })
+})
+
 
 // app.get('/search', (req, res) => {
 //   const keyword = req.query.keyword

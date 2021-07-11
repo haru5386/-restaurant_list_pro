@@ -20,11 +20,15 @@
 
 <!-- restaurant list -->
 <div class="container mt-5">
+  <div class="d-flex justify-content-center mb-2">
+    <button href="#" class="btn btn-warning mx-auto">Create</button>
+  </div>
+
   <div class="row">
     <div class="col-md-10 col-12 mx-auto">
       <div class="card-columns">
         {{#each restaurant}}
-        <a href="/restaurants/{{this.id}}" class="text-secondary">
+        <a href="/restaurants/{{this._id}}" class="text-secondary">
           <div class="card mb-3">
             <img class="card-img-top" src="{{this.image}}" alt="{{this.name}}">
             <div class="card-body p-3">
@@ -35,10 +39,14 @@
               </div>
 
               <span class="badge badge-pill badge-danger font-weight-normal">
-                4.3
+                {{this.rating}}
                 <i class="fas fa-star fa-xs"></i>
               </span>
 
+            </div>
+            <div class="card-body d-flex justify-content-between">
+              <button href="#" class="btn btn-primary btn-sm">Edit</button>
+              <button href="#" class="btn btn-success btn-sm">delete</button>
             </div>
           </div>
         </a>
