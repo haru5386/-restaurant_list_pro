@@ -73,9 +73,42 @@ app.post('/restaurant', (req, res) => {
   return Restaurant.create({ name, name_en, category, image, rating, location, phone, description })
     .then(() => res.redirect('/'))
     .catch(error => console.log(error))
-
 })
 
+// 編輯資料
+app.get('/restaurants/:restaurant_id/edit', (req, res) => {
+  const id = req.params.restaurant_id
+  return Restaurant.findById(id)
+    .lean()
+    .then((restaurant) => res.render('edit', { restaurant }))
+    .catch(error => console.log(error))
+})
+
+app.post('/restaurants/:restaurant_id/edit', (req, res) => {
+  const id = req.params.restaurant_id
+  const name = req.body.name
+  const name_en = req.body.name_en
+  const category = req.body.category
+  const image = req.body.image
+  const rating = req.body.rating
+  const location = req.body.location
+  const phone = req.body.phone
+  const description = req.body.description
+  return Restaurant.findById(id)
+    .then((restaurant) => {
+      restaurant.name = name
+      restaurant.name_en = name_en
+      restaurant.category = category
+      restaurant.image = image
+      restaurant.rating = rating
+      restaurant.location = location
+      restaurant.phone = phone
+      restaurant.description = description
+      return restaurant.save()
+    })
+    .then(() => res.redirect(`/restaurants/${id}`))
+    .catch(error => console.log(error))
+})
 app.listen(port, () => {
   console.log(`Express is running on http://localhost:${port}`)
 })

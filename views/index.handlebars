@@ -44,9 +44,14 @@
               </span>
 
             </div>
-            <div class="card-body d-flex justify-content-between">
-              <button href="#" class="btn btn-primary btn-sm">Edit</button>
-              <button href="#" class="btn btn-success btn-sm">delete</button>
+            <div class="card-body ">
+              <a href="/restaurants/{{this._id}}/edit">
+                <button class="btn btn-primary btn-sm">Edit</button>
+              </a>
+
+              <form action="./todos/{{ this._id }}/delete" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-success btn-sm">delete</button>
+              </form>
             </div>
           </div>
         </a>
