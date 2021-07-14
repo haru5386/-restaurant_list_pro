@@ -8,6 +8,7 @@ const methodOverride = require('method-override')
 
 //載入資料
 const Restaurant = require('./models/restaurant')
+const routes = require('./routes')
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
@@ -28,35 +29,8 @@ db.once('open', () => {
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+app.use(routes)
 
-app.get('/', (req, res) => {
-  Restaurant.find()
-    .lean()
-    .sort({ _id: 1 })
-    .then(restaurant => res.render('index', { restaurant }))
-    .catch(error => console.error(error))
-})
-
-app.post('/', (req, res) => {
-  const sort = req.body.sort
-  let Sort = '_id: 1'
-  if (sort === 'AtoZ') {
-    Sort = { name: 1 }
-    console.log(Sort)
-  } else if (sort === 'ZtoA') {
-    Sort = { name: -1 }
-  } else if (sort === 'category') {
-    Sort = { category: 1 }
-  } else if (sort === 'location') {
-    Sort = { location: 1 }
-  }
-
-  Restaurant.find()
-    .lean()
-    .sort(Sort)
-    .then(restaurant => res.render('index', { restaurant, Sort }))
-    .catch(error => console.error(error))
-})
 
 app.get('/restaurants/:restaurant_id', (req, res) => {
   const id = req.params.restaurant_id
@@ -84,50 +58,7 @@ app.get('/restaurant/new', (req, res) => {
   return res.render('new')
 })
 
-// 接住新增的資料
-app.post('/restaurant', (req, res) => {
-  const { name, name_en, category, image, rating, location, phone, description } = req.body
-  return Restaurant.create({ name, name_en, category, image, rating, location, phone, description })
-    .then(() => res.redirect('/'))
-    .catch(error => console.log(error))
-})
 
-// 編輯資料
-app.get('/restaurants/:restaurant_id/edit', (req, res) => {
-  const id = req.params.restaurant_id
-  return Restaurant.findById(id)
-    .lean()
-    .then((restaurant) => res.render('edit', { restaurant }))
-    .catch(error => console.log(error))
-})
-
-app.put('/restaurants/:restaurant_id', (req, res) => {
-  const id = req.params.restaurant_id
-  const { name, name_en, category, image, rating, location, phone, description } = req.body
-  return Restaurant.findById(id)
-    .then((restaurant) => {
-      restaurant.name = name
-      restaurant.name_en = name_en
-      restaurant.category = category
-      restaurant.image = image
-      restaurant.rating = rating
-      restaurant.location = location
-      restaurant.phone = phone
-      restaurant.description = description
-      return restaurant.save()
-    })
-    .then(() => res.redirect(`/restaurants/${id}`))
-    .catch(error => console.log(error))
-})
-
-// 刪除
-app.delete('/restaurants/:restaurant_id', (req, res) => {
-  const id = req.params.restaurant_id
-  return Restaurant.findById(id)
-    .then(restaurant => restaurant.remove())
-    .then(() => res.redirect('/'))
-    .catch(error => console.log(error))
-})
 app.listen(port, () => {
   console.log(`Express is running on http://localhost:${port}`)
 })
