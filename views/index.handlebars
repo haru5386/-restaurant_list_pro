@@ -28,7 +28,7 @@
             <option value="category">類別</option>
             <option value="location">地區</option>
           </select>
-          {{!-- <button type="submit">123</button> --}}
+
         </div>
       </form>
 
@@ -63,7 +63,7 @@
                   <button class="btn btn-primary btn-sm">Edit</button>
                 </a>
 
-                <form action="/restaurants/{{ this._id }}/delete" method="POST" style="display: inline;">
+                <form action="/restaurants/{{ this._id }}?_method=DELETE" method="POST" style="display: inline;">
                   <button type="submit" class="btn btn-success btn-sm">delete</button>
                 </form>
               </div>

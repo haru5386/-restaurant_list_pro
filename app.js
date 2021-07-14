@@ -4,6 +4,7 @@ const port = 3000
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
 
 //載入資料
 const Restaurant = require('./models/restaurant')
@@ -26,6 +27,7 @@ db.once('open', () => {
 
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
 
 app.get('/', (req, res) => {
   Restaurant.find()
@@ -99,7 +101,7 @@ app.get('/restaurants/:restaurant_id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 
-app.post('/restaurants/:restaurant_id/edit', (req, res) => {
+app.put('/restaurants/:restaurant_id', (req, res) => {
   const id = req.params.restaurant_id
   const { name, name_en, category, image, rating, location, phone, description } = req.body
   return Restaurant.findById(id)
@@ -119,7 +121,7 @@ app.post('/restaurants/:restaurant_id/edit', (req, res) => {
 })
 
 // 刪除
-app.post('/restaurants/:restaurant_id/delete', (req, res) => {
+app.delete('/restaurants/:restaurant_id', (req, res) => {
   const id = req.params.restaurant_id
   return Restaurant.findById(id)
     .then(restaurant => restaurant.remove())
