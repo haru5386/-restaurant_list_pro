@@ -62,14 +62,7 @@ app.get('/restaurant/new', (req, res) => {
 
 // 接住新增的資料
 app.post('/restaurant', (req, res) => {
-  const name = req.body.name
-  const name_en = req.body.name_en
-  const category = req.body.category
-  const image = req.body.image
-  const rating = req.body.rating
-  const location = req.body.location
-  const phone = req.body.phone
-  const description = req.body.description
+  const { name, name_en, category, image, rating, location, phone, description } = req.body
   return Restaurant.create({ name, name_en, category, image, rating, location, phone, description })
     .then(() => res.redirect('/'))
     .catch(error => console.log(error))
@@ -86,14 +79,7 @@ app.get('/restaurants/:restaurant_id/edit', (req, res) => {
 
 app.post('/restaurants/:restaurant_id/edit', (req, res) => {
   const id = req.params.restaurant_id
-  const name = req.body.name
-  const name_en = req.body.name_en
-  const category = req.body.category
-  const image = req.body.image
-  const rating = req.body.rating
-  const location = req.body.location
-  const phone = req.body.phone
-  const description = req.body.description
+  const { name, name_en, category, image, rating, location, phone, description } = req.body
   return Restaurant.findById(id)
     .then((restaurant) => {
       restaurant.name = name
@@ -113,6 +99,7 @@ app.post('/restaurants/:restaurant_id/edit', (req, res) => {
 // 刪除
 app.post('/restaurants/:restaurant_id/delete', (req, res) => {
   const id = req.params.restaurant_id
+  confirm('你確定嗎？')
   return Restaurant.findById(id)
     .then(restaurant => restaurant.remove())
     .then(() => res.redirect('/'))
