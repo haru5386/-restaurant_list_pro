@@ -5,6 +5,14 @@ const router = express.Router()
 //載入資料
 const Restaurant = require('../../models/restaurant')
 
+router.get('/:restaurant_id', (req, res) => {
+  const id = req.params.restaurant_id
+  return Restaurant.findById(id)
+    .lean()
+    .then((restaurant) => res.render('show', { restaurant }))
+    .catch(error => console.log(error))
+})
+
 // 接住新增的資料
 router.post('/', (req, res) => {
   const { name, name_en, category, image, rating, location, phone, description } = req.body
