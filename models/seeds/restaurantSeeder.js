@@ -1,4 +1,3 @@
-
 const Restaurant = require('../restaurant')
 const raw = require('./restaurant.json')
 const restaurants = raw.results
