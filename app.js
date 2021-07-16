@@ -22,23 +22,8 @@ app.use(routes)
 
 
 
-// 搜尋功能
-app.get('/search', (req, res) => {
-  const keyword = req.query.keyword
-  Restaurant.find()
-    .lean()
-    .then((restaurants) => {
-      let restaurantSearch = restaurants.filter((restaurant) => {
-        return restaurant.name.toLocaleLowerCase().includes(keyword.toLowerCase()) || restaurant.category.toLocaleLowerCase().includes(keyword.toLowerCase())
-      })
-      res.render('index', { restaurant: restaurantSearch, keyword })
-    })
-})
 
-// 新增功能
-app.get('/restaurant/new', (req, res) => {
-  return res.render('new')
-})
+
 
 
 app.listen(port, () => {

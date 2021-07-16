@@ -16,12 +16,12 @@
         <label for="category">餐廳分類</label>
         <select name="category" class="form-control" id="category" required>
           <option value="">--請選擇分類--</option>
-          <option value="義式餐廳">義式餐廳</option>
-          <option value="美式">美式</option>
-          <option value="酒吧">酒吧</option>
-          <option value="日本料理">日本料理</option>
-          <option value="咖啡">咖啡</option>
-          <option value="中東料理">中東料理</option>
+          <option value="義式餐廳" {{#if category.Italy }}selected {{/if}}>義式餐廳</option>
+          <option value="美式" {{#if category.Amer }}selected {{/if}}>美式</option>
+          <option value="酒吧" {{#if category.Bar }}selected {{/if}}>酒吧</option>
+          <option value="日本料理" {{#if category.Japan }}selected {{/if}}>日本料理</option>
+          <option value="咖啡" {{#if category.Coffee }}selected {{/if}}>咖啡</option>
+          <option value="中東料理" {{#if category.Middleeast }}selected {{/if}}>中東料理</option>
         </select>
       </div>
     </div>

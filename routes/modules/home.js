@@ -6,16 +6,8 @@ const router = express.Router()
 const Restaurant = require('../../models/restaurant')
 
 router.get('/', (req, res) => {
-  Restaurant.find()
-    .lean()
-    .sort({ _id: 1 })
-    .then(restaurant => res.render('index', { restaurant }))
-    .catch(error => console.error(error))
-})
-
-router.post('/', (req, res) => {
-  const sort = req.body.sort
-  let Sort = '_id: 1'
+  const sort = req.query.sort
+  let Sort = { _id: 1 }
   if (sort === 'AtoZ') {
     Sort = { name: 1 }
     console.log(Sort)
@@ -26,11 +18,10 @@ router.post('/', (req, res) => {
   } else if (sort === 'location') {
     Sort = { location: 1 }
   }
-
   Restaurant.find()
     .lean()
     .sort(Sort)
-    .then(restaurant => res.render('index', { restaurant, Sort }))
+    .then(restaurant => res.render('index', { restaurant }))
     .catch(error => console.error(error))
 })
 
