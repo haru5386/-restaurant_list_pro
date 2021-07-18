@@ -1,4 +1,5 @@
 const express = require('express')
+const { check, validationResult } = require('express-validator')
 const router = express.Router()
 
 
@@ -28,8 +29,15 @@ router.get('/search', (req, res) => {
     })
 })
 
-router.get('/:restaurant_id', (req, res) => {
+router.get('/:restaurant_id', [
+  check('restaurant_id', '查無此ID').isMongoId()
+], (req, res) => {
   const id = req.params.restaurant_id
+  let errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    const alert = errors.array()
+    return res.status(422).render('errorID', { alert: alert[0] })
+  }
   return Restaurant.findById(id)
     .lean()
     .then((restaurant) => res.render('show', { restaurant }))
@@ -42,8 +50,28 @@ router.get('/:restaurant_id', (req, res) => {
 
 
 // 接住新增的資料
-router.post('/', (req, res) => {
+router.post('/', [
+  check('name', '請輸入1~20的字位元')
+    .isLength({ min: 1, max: 20 }),
+  check('category', '請選擇分類')
+    .not().isEmpty(),
+  check('image', '請輸入圖片網址')
+    .not().isEmpty(),
+  check('rating', '請輸入1~5的評分')
+    .isFloat({ min: 1, max: 5 }),
+  check('location', '請輸入地址')
+    .not().isEmpty(),
+  check('phone', '請輸入手機')
+    .not().isEmpty(),
+  check('description', '請輸入描述')
+    .not().isEmpty(),
+], (req, res) => {
   const { name, name_en, category, image, rating, location, phone, description } = req.body
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    const alert = errors.array()
+    return res.status(422).render('new', { alert, name, name_en, category, image, rating, location, phone, description })
+  }
   return Restaurant.create({ name, name_en, category, image, rating, location, phone, description })
     .then(() => res.redirect('/'))
     .catch(error => {
@@ -113,12 +141,11 @@ router.put('/:restaurant_id', (req, res) => {
 // 刪除
 router.delete('/:restaurant_id', (req, res) => {
   const id = req.params.restaurant_id
-  console.log(id)
   return Restaurant.findById(id)
     .then(restaurant => restaurant.remove())
     .then(() => res.redirect('/'))
     .catch(error => {
-      console.log(error)
+      // console.log(error)
       res.render('index', { errMsg: error.message })
     })
 })
