@@ -12,6 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
 //載入資料
 const Restaurant = require('./models/restaurant')
 const routes = require('./routes')
+const usePassport = require('./config/passport')
 require('./config/mongoose')
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
@@ -25,9 +26,10 @@ app.use(session({
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+
+usePassport(app)
+
 app.use(routes)
-
-
 
 app.listen(port, () => {
   console.log(`Express is running on http://localhost:${port}`)
