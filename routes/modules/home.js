@@ -18,7 +18,8 @@ router.get('/', (req, res) => {
   } else if (sort === 'location') {
     Sort = { location: 1 }
   }
-  Restaurant.find()
+  const userId = req.user._id
+  Restaurant.find({ userId })
     .lean()
     .sort(Sort)
     .then(restaurant => res.render('index', { restaurant }))

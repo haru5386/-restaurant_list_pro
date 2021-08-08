@@ -15,7 +15,8 @@ router.get('/new', (req, res) => {
 // 搜尋功能
 router.get('/search', (req, res) => {
   const keyword = req.query.keyword
-  Restaurant.find()
+  const userId = req.user._id
+  Restaurant.find({ userId })
     .lean()
     .then((restaurants) => {
       let restaurantSearch = restaurants.filter((restaurant) => {
@@ -32,13 +33,14 @@ router.get('/search', (req, res) => {
 router.get('/:restaurant_id', [
   check('restaurant_id', '查無此ID').isMongoId()
 ], (req, res) => {
-  const id = req.params.restaurant_id
+  const userId = req.user._id
+  const _id = req.params.restaurant_id
   let errors = validationResult(req)
   if (!errors.isEmpty()) {
     const alert = errors.array()
     return res.status(422).render('errorID', { alert: alert[0] })
   }
-  return Restaurant.findById(id)
+  return Restaurant.findOne({ _id, userId })
     .lean()
     .then((restaurant) => res.render('show', { restaurant }))
     .catch(error => {
@@ -66,13 +68,14 @@ router.post('/', [
   check('description', '請輸入描述')
     .not().isEmpty(),
 ], (req, res) => {
+  const userId = req.user._id
   const { name, name_en, category, image, rating, location, phone, description } = req.body
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     const alert = errors.array()
     return res.status(422).render('new', { alert, name, name_en, category, image, rating, location, phone, description })
   }
-  return Restaurant.create({ name, name_en, category, image, rating, location, phone, description })
+  return Restaurant.create({ name, name_en, category, image, rating, location, phone, description, userId })
     .then(() => res.redirect('/'))
     .catch(error => {
       console.log(error)
@@ -82,7 +85,8 @@ router.post('/', [
 
 // 編輯資料
 router.get('/:restaurant_id/edit', (req, res) => {
-  const id = req.params.restaurant_id
+  const userId = req.user._id
+  const _id = req.params.restaurant_id
   const category = {
     Italy: false,
     Amer: false,
@@ -91,7 +95,7 @@ router.get('/:restaurant_id/edit', (req, res) => {
     Coffee: false,
     Middleeast: false
   }
-  return Restaurant.findById(id)
+  return Restaurant.findOne({ _id, userId })
     .lean()
     .then((restaurant) => {
       if (restaurant.category === '義式餐廳') {
@@ -117,9 +121,10 @@ router.get('/:restaurant_id/edit', (req, res) => {
 })
 
 router.put('/:restaurant_id', (req, res) => {
-  const id = req.params.restaurant_id
+  const userId = req.user._id
+  const _id = req.params.restaurant_id
   const { name, name_en, category, image, rating, location, phone, description } = req.body
-  return Restaurant.findById(id)
+  return Restaurant.findOne({ _id, userId })
     .then((restaurant) => {
       restaurant.name = name
       restaurant.name_en = name_en
@@ -131,7 +136,7 @@ router.put('/:restaurant_id', (req, res) => {
       restaurant.description = description
       return restaurant.save()
     })
-    .then(() => res.redirect(`/restaurants/${id}`))
+    .then(() => res.redirect(`/restaurants/${_id}`))
     .catch(error => {
       console.log(error)
       res.render('index', { errMsg: error.message })
@@ -140,8 +145,9 @@ router.put('/:restaurant_id', (req, res) => {
 
 // 刪除
 router.delete('/:restaurant_id', (req, res) => {
-  const id = req.params.restaurant_id
-  return Restaurant.findById(id)
+  const userId = req.user._id
+  const _id = req.params.restaurant_id
+  return Restaurant.findOne({ _id, userId })
     .then(restaurant => restaurant.remove())
     .then(() => res.redirect('/'))
     .catch(error => {
