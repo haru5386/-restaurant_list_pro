@@ -10,7 +10,8 @@ router.get('/login', (req, res) => {
 
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/',
-  failureRedirect: '/users/login'
+  failureRedirect: '/users/login',
+  failureFlash: true
 }))
 
 router.get('/register', (req, res) => {
@@ -19,10 +20,20 @@ router.get('/register', (req, res) => {
 
 router.post('/register', (req, res) => {
   const { name, email, password, ConfirmPassword } = req.body
+  const errors = []
+  if (!name || !email || !password || !ConfirmPassword) {
+    errors.push({ message: '所有欄位都是必填的' })
+  }
+  if (password !== ConfirmPassword) {
+    errors.push({ message: '確認密碼不相符' })
+  }
+  if (errors.length) {
+    return res.render('register', { errors, name, email, password, ConfirmPassword })
+  }
   User.findOne({ email }).then(user => {
     if (user) {
-      console.log('user already exists')
-      res.render('register', { name, email, password, ConfirmPassword })
+      errors.push({ message: 'user already exists' })
+      res.render('register', { errors, name, email, password, ConfirmPassword })
     } else {
       return User.create({
         name, email, password
@@ -35,6 +46,7 @@ router.post('/register', (req, res) => {
 
 router.get('/logout', (req, res) => {
   req.logout()
+  req.flash('success_msg', '成功登出！')
   res.redirect('/users/login')
 })
 

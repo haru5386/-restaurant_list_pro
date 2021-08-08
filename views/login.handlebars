@@ -2,8 +2,9 @@
   <div class="col-md-6 m-auto">
     <div class="card card-body">
       <h2>Login</h2>
+      {{> message}}
       <form action="/users/login" method="POST">
-        <div class="form-group mt-4">
+        <div class="form-group mt-2">
           <label for="email">Email address</label>
           <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
         </div>
