@@ -22,11 +22,18 @@
       <a class="navbar-brand" href="/">
         <img src="https://assets-lighthouse.s3.amazonaws.com/uploads/image/file/6227/restaurant-list-logo.png"
           width="30" height="30" class="d-inline-block align-top" alt="我的餐廳清單">
-        我的餐廳清單
+        {{#if isAuthenticated}} {{user.name}}的{{/if}}餐廳清單
       </a>
-      <a href="/restaurants/new" class="mb-2">
-        <button class="text-white  btn btn-warning mx-auto">Create</button>
+      {{#if isAuthenticated}}
+      <a href="/users/logout" class="mb-2">
+        <button class="text-white  btn btn-warning mx-auto">Logout</button>
       </a>
+      {{else}}
+      <a href="/users/login" class="mb-2">
+        <button class="text-white  btn btn-warning mx-auto">Login</button>
+      </a>
+      {{/if}}
+
     </div>
   </nav>
 
@@ -35,10 +42,10 @@
 
 <body>
 
-<div class="container">
-{{{ body}}}
-</div>
-  
+  <div class="container">
+    {{{ body}}}
+  </div>
+
   <script>
     function comfirm() {
       confirm('你確定嗎？')
